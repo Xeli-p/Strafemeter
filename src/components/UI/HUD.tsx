@@ -1,10 +1,5 @@
 import React from 'react';
-
-interface HUDProps {
-  syncP: number;
-  scrollSpeed: number;
-  onSpeedChange: (amt: number) => void;
-}
+import type { HUDProps } from '../../types';
 
 const HUD: React.FC<HUDProps> = ({ syncP, scrollSpeed, onSpeedChange}) => {
 

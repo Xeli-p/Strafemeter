@@ -10,3 +10,9 @@ export interface Line {
     x: number;
     color: string;
   }
+
+export interface HUDProps {
+    syncP: number;
+    scrollSpeed: number;
+    onSpeedChange: (amt: number) => void;
+  }

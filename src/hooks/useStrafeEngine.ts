@@ -87,6 +87,35 @@ export const useStrafeEngine = (
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      /// drawing grid----------
+      const gridSize = 60;
+
+      const scrollOffset = (numDrawnLines.current * scrollSpeed) % gridSize;
+          
+      ctx.save();
+      ctx.strokeStyle = 'rgba(234, 179, 8, 0.08)';
+      ctx.lineWidth = 1;
+          
+      /// Vertical static lines
+      for (let x = 0; x <= canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      
+      /// Horizontal moving lines
+      for (let y = scrollOffset; y <= canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      /// ---- end of grid drawing
+
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
     

@@ -134,8 +134,7 @@ export const useStrafeEngine = (
         const prevYPos = (canvas.height / 8) + ((total - (i - 1)) * scrollSpeed);
     
         const widthProgress = i / total; 
-        const thicknessFactor = Math.pow(1 - widthProgress, 0.1);
-        ctx.lineWidth = Math.max(25, 70 * thicknessFactor);
+        ctx.lineWidth = Math.max(15, 80 * widthProgress);
         
         ctx.beginPath();
         ctx.strokeStyle = curr.color;

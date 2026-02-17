@@ -4,4 +4,5 @@ export const ENGINE_CONFIG = {
     DEFAULT_SPEED: 3,
     MIN_SPEED: 0.5,
     MAX_SPEED: 10,
+    LINE_WIDTH: 70,
   };

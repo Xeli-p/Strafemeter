@@ -11,6 +11,7 @@ export const useStrafeEngine = (
 ) => {
   const [syncP, setSyncP] = useState(0);
   const [totalLines, setTotalLines] = useState(0);
+  const [strafes, setStrafes] = useState(0);
 
   /// Engine refs
   const lines = useRef<(Line | null)[]>(new Array(ENGINE_CONFIG.MAX_SIZE).fill(null));
@@ -21,6 +22,8 @@ export const useStrafeEngine = (
   const numGreenLines = useRef(0);
   const numDrawnLines = useRef(0);
   const syncRef = useRef(0);
+  const strafesRef = useRef(0);
+  const lastDirection = useRef<'left' | 'right' | null>(null);
 
   /// resetting
   useEffect(() => {
@@ -34,6 +37,9 @@ export const useStrafeEngine = (
       lastTime.current = performance.now();
       setTotalLines(0);
       setSyncP(0);
+      setStrafes(0);
+      lastDirection.current = null;
+      strafesRef.current = 0;
     }
   }, [isPaused]);
 
@@ -53,6 +59,17 @@ export const useStrafeEngine = (
       let color = '#333';
       if (((isKeyDownA && isLeft) || (isKeyDownD && isRight)) && !(isKeyDownA && isKeyDownD)) {
         color = '#0f0';
+      }
+
+      let currentDir: 'left' | 'right' | null = null;
+      if (isLeft) currentDir = 'left';
+      if (isRight) currentDir = 'right';
+
+      if (currentDir && currentDir !== lastDirection.current) {
+        strafesRef.current += 1;
+        lastDirection.current = currentDir;
+
+        setStrafes(strafesRef.current);
       }
 
       const currentHead = head.current;
@@ -161,5 +178,5 @@ export const useStrafeEngine = (
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPaused, scrollSpeed, canvasRef, inputs]);
 
-  return { syncP, totalLines };
+  return { syncP, totalLines, strafes };
 };

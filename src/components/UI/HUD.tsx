@@ -1,7 +1,7 @@
 import React from 'react';
 import type { HUDProps } from '../../types';
 
-const HUD: React.FC<HUDProps> = ({ syncP, scrollSpeed, onSpeedChange}) => {
+const HUD: React.FC<HUDProps> = ({ syncP, scrollSpeed, onSpeedChange, strafes}) => {
 
 return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-10 pointer-events-auto">
@@ -11,6 +11,15 @@ return (
           <span className="text-[20px] opacity-50 uppercase tracking-[0.2em]">Sync</span>
           <span className={`text-4xl font-black italic tabular-nums ${syncP > 85 ? 'text-green-400' : 'text-yellow-500'}`}>
             {syncP}%
+          </span>
+        </div>
+
+        <div className="w-px h-6 bg-yellow-500/20" />
+
+        <div className="flex items-center gap-4">
+          <span className="text-[20px] opacity-50 uppercase tracking-[0.2em]">Strafes</span>
+          <span className={`text-4xl font-black italic tabular-nums 'text-yellow-500'}`}>
+            {strafes}
           </span>
         </div>
 

@@ -11,7 +11,6 @@ export const useStrafeEngine = (
 ) => {
   const [syncP, setSyncP] = useState(0);
   const [totalLines, setTotalLines] = useState(0);
-  const [strafes, setStrafes] = useState(0);
   const [sps, setSps] = useState(0);
 
   /// Engine refs
@@ -38,7 +37,6 @@ export const useStrafeEngine = (
       lastTime.current = performance.now();
       setTotalLines(0);
       setSyncP(0);
-      setStrafes(0);
       lastDirection.current = null;
       strafesRef.current = 0;
       setSps(0);
@@ -71,7 +69,6 @@ export const useStrafeEngine = (
         strafesRef.current += 1;
         lastDirection.current = currentDir;
 
-        setStrafes(strafesRef.current);
       }
 
       if (numDrawnLines.current % 10 === 0 && numDrawnLines.current > 0) {

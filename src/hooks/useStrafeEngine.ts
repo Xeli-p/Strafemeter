@@ -12,6 +12,7 @@ export const useStrafeEngine = (
   const [syncP, setSyncP] = useState(0);
   const [totalLines, setTotalLines] = useState(0);
   const [strafes, setStrafes] = useState(0);
+  const [sps, setSps] = useState(0);
 
   /// Engine refs
   const lines = useRef<(Line | null)[]>(new Array(ENGINE_CONFIG.MAX_SIZE).fill(null));
@@ -40,6 +41,7 @@ export const useStrafeEngine = (
       setStrafes(0);
       lastDirection.current = null;
       strafesRef.current = 0;
+      setSps(0);
     }
   }, [isPaused]);
 
@@ -70,6 +72,14 @@ export const useStrafeEngine = (
         lastDirection.current = currentDir;
 
         setStrafes(strafesRef.current);
+      }
+
+      if (numDrawnLines.current % 10 === 0 && numDrawnLines.current > 0) {
+        const totalSeconds = (numDrawnLines.current * ENGINE_CONFIG.TICK_RATE) / 1000;
+
+        const currentSPS = strafesRef.current / totalSeconds;
+
+        setSps(Math.round(currentSPS * 10) / 10);
       }
 
       const currentHead = head.current;
@@ -178,5 +188,5 @@ export const useStrafeEngine = (
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPaused, scrollSpeed, canvasRef, inputs]);
 
-  return { syncP, totalLines, strafes };
+  return { syncP, totalLines, sps };
 };

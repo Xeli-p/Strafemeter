@@ -15,5 +15,5 @@ export interface HUDProps {
     syncP: number;
     scrollSpeed: number;
     onSpeedChange: (amt: number) => void;
-    strafes: number;
+    sps: number;
   }

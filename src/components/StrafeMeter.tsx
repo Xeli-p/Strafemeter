@@ -13,7 +13,7 @@ const StrafeMeter: React.FC = () => {
   const [scrollSpeed, setScrollSpeed] = useState(3);
 
   /// Engine hook
-  const { syncP, strafes } = useStrafeEngine(canvasRef, inputs, scrollSpeed, isPaused);
+  const { syncP, sps } = useStrafeEngine(canvasRef, inputs, scrollSpeed, isPaused);
 
   const handleSpeedChange = (amt: number) => {
     setScrollSpeed((prev) => {
@@ -52,9 +52,9 @@ const StrafeMeter: React.FC = () => {
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-10 pointer-events-auto">
           <HUD 
             syncP={syncP} 
-            strafes={strafes}
             scrollSpeed={scrollSpeed} 
-            onSpeedChange={handleSpeedChange} 
+            onSpeedChange={handleSpeedChange}
+            sps={sps} 
           />
         </div>
       )}

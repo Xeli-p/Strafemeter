@@ -1,16 +1,12 @@
 @import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #0a0a0a;
+/* Tailwind's preflight already resets margin, padding and box-sizing.
+   Anything added here must live in a layer, or it overrides the utilities. */
+@layer base {
+  html, body, #root {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0a0a0a;
+  }
 }

@@ -1,58 +1,74 @@
 import { useEffect, useRef } from 'react';
 import type { InputState } from '../types';
+import { ENGINE_CONFIG } from '../constants/config';
 
+export const useMovement = () => {
+  const inputs = useRef<InputState>({
+    isKeyDownA: false,
+    isKeyDownD: false,
+    isLeft: false,
+    isRight: false,
+    mouseX: 0,
+  });
 
-  export const useMovement = () => {
+  const lastMoveTime = useRef(0);
 
-    const inputs = useRef<InputState>({
-      isKeyDownA: false,
-      isKeyDownD: false,
-      isLeft: false,
-      isRight: false,
-      mouseX: 1000,
-    });
-  
-    useEffect(() => {
-      const handleKeyDown = (event: KeyboardEvent) => {
-        const key = event.key.toLowerCase();
-        if (key === 'a') inputs.current.isKeyDownA = true;
-        if (key === 'd') inputs.current.isKeyDownD = true;
-      };
-  
-      const handleKeyUp = (event: KeyboardEvent) => {
-        const key = event.key.toLowerCase();
-        if (key === 'a') inputs.current.isKeyDownA = false;
-        if (key === 'd') inputs.current.isKeyDownD = false;
-      };
-  
-      const handleMouseMove = (e: MouseEvent) => {
-        const currentX = e.clientX;
-        const prevX = inputs.current.mouseX;
-  
-        if (currentX < prevX) {
-          inputs.current.isLeft = true;
-          inputs.current.isRight = false;
-        } else if (currentX > prevX) {
-          inputs.current.isRight = true;
-          inputs.current.isLeft = false;
-        } else {
-          inputs.current.isLeft = false;
-          inputs.current.isRight = false;
-        }
-  
-        inputs.current.mouseX = currentX;
-      };
-  
-      window.addEventListener('keydown', handleKeyDown);
-      window.addEventListener('keyup', handleKeyUp);
-      window.addEventListener('mousemove', handleMouseMove);
-  
-      return () => {
-        window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('keyup', handleKeyUp);
-        window.removeEventListener('mousemove', handleMouseMove);
-      };
-    }, []);
-  
-    return inputs;
-  };
+  useEffect(() => {
+    inputs.current.mouseX = window.innerWidth / 2;
+
+    /// event.code is layout independent and unaffected by Shift
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'KeyA') inputs.current.isKeyDownA = true;
+      if (event.code === 'KeyD') inputs.current.isKeyDownD = true;
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.code === 'KeyA') inputs.current.isKeyDownA = false;
+      if (event.code === 'KeyD') inputs.current.isKeyDownD = false;
+    };
+
+    /// keyup never arrives if the window loses focus while a key is held
+    const handleBlur = () => {
+      inputs.current.isKeyDownA = false;
+      inputs.current.isKeyDownD = false;
+      inputs.current.isLeft = false;
+      inputs.current.isRight = false;
+    };
+
+    /// movementX keeps reporting at the screen edge and under pointer lock, unlike clientX
+    const handleMouseMove = (e: MouseEvent) => {
+      const dx = e.movementX;
+      lastMoveTime.current = performance.now();
+
+      inputs.current.isLeft = dx < 0;
+      inputs.current.isRight = dx > 0;
+      inputs.current.mouseX = Math.min(Math.max(0, inputs.current.mouseX + dx), window.innerWidth);
+    };
+
+    let rafId: number;
+    const checkMovementStale = () => {
+      const now = performance.now();
+      if (now - lastMoveTime.current > ENGINE_CONFIG.MOVE_STALE_MS) {
+        inputs.current.isLeft = false;
+        inputs.current.isRight = false;
+      }
+      rafId = requestAnimationFrame(checkMovementStale);
+    };
+    rafId = requestAnimationFrame(checkMovementStale);
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  return inputs;
+};
